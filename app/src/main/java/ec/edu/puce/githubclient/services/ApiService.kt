@@ -12,6 +12,7 @@ interface ApiService {
         @Query(value = "affiliation") affiliation:String="owner",
         @Query(value = "sort") sort: String="created",
         @Query(value = "per_page") perPage: Int=100,
+
         @Query(value = "direction") direction: String="desc",
     ): List<Repository>
 }
