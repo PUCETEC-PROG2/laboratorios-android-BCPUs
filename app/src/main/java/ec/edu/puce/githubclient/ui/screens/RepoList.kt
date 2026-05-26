@@ -1,12 +1,17 @@
 package ec.edu.puce.githubclient.ui.screens
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,39 +26,58 @@ import ec.edu.puce.githubclient.viewmodels.RepoListViewModel
 
 @Composable
 fun RepoList(
-    modifier:Modifier=Modifier,
-    viewModel : RepoListViewModel=viewModel()
+    modifier: Modifier = Modifier,
+    viewModel : RepoListViewModel=viewModel(),
+    onNavigateToForm: () -> Unit = {}
 ){
     val repos by viewModel.repos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMsg by viewModel.erroMsg.collectAsState()
-
-    Box(
-        modifier=modifier.fillMaxSize()
-    ){
-        if (isLoading){
-            CircularProgressIndicator(
-                modifier=Modifier.align(Alignment.Center)
-            )
+    Scaffold (
+        floatingActionButton ={
+            FloatingActionButton(
+                onClick = onNavigateToForm,
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Anadir repositorio"
+                )
+            }
         }
-        errorMsg?.let {
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error,
-                modifier= Modifier
-                    .align (Alignment.Center)
-                    .padding(all = 16.dp)
-            )
-        }
-    if (!isLoading && errorMsg==null){
-        LazyColumn (modifier = modifier.fillMaxSize()){
-            items(count = repos.size) { i ->
-                RepoItem(repository = repos[i])
+    ){ paddingValues ->
 
+        Box(
+            modifier=modifier.fillMaxSize()
+                .padding(paddingValues)
+        ){
+            if (isLoading){
+                CircularProgressIndicator(
+                    modifier=Modifier.align(Alignment.Center)
+                )
+            }
+            errorMsg?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier= Modifier
+                        .align (Alignment.Center)
+                        .padding(all = 16.dp)
+                )
+            }
+        if (!isLoading && errorMsg==null){
+            LazyColumn (modifier = modifier.fillMaxSize()){
+                items(count = repos.size) { i ->
+                    RepoItem(repository = repos[i])
+
+                }
             }
         }
     }
     }
+
 }
 @Preview (showBackground = true)
 @Composable
