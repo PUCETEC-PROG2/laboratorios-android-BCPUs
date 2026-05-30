@@ -8,9 +8,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ec.edu.puce.githubclient.ui.screens.RepoList
 import ec.edu.puce.githubclient.ui.theme.GithubClientTheme
-import ec.edu.puce.githubclient.ui.theme.RepoForm
+import ec.edu.puce.githubclient.ui.screens.RepoForm
+import ec.edu.puce.githubclient.viewmodels.RepoListViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -26,6 +28,8 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf("repoList")
             }
 
+            val listViewModel: RepoListViewModel = viewModel()
+
             GithubClientTheme {
 
                 when (currentScreen) {
@@ -34,7 +38,11 @@ class MainActivity : ComponentActivity() {
                         onNavigateToForm = { currentScreen = "repoForm" }
                     )
                     "repoForm" -> RepoForm(
-                        onBackClick = {currentScreen="repoList"}
+                        onBackClick = {currentScreen="repoList"},
+                        onSaveSuccess = {
+                            listViewModel.fetchRepos()
+                            currentScreen = "repoList"
+                        }
                     )
                 }
             }
